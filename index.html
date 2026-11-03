@@ -214,7 +214,7 @@ async function flush(id){
 }
 setInterval(()=>{if(READY&&unsynced.size&&!inflight)[...unsynced].forEach(id=>{if(!timers[id])flush(id)})},15000);
 
-async function loadConfig(){if(!READY)return;try{const j=await api({action:"config"});if(j.pairs&&j.pairs.length){cfg={pairs:j.pairs,roles:j.roles||[],flags:j.flags||[]};ls.set("ia-cfg",cfg);renderPairs();renderSheet()}}catch(e){}}
+async function loadConfig(){if(!READY)return;try{const j=await api({action:"config"});if(j.pairs&&j.pairs.length){cfg={pairs:j.pairs,roles:j.roles||[],flags:j.flags||[]};ls.set("ia-cfg",cfg);if(pair&&!cfg.pairs.includes(pair)){pair="";ls.set("ia-pair","");C={};sel=null;renderRail()}renderPairs();renderSheet()}}catch(e){}}
 async function loadPair(){
   C=ls.get(cacheKey(),{});sel=null;renderRail();renderSheet();
   if(!READY){showBanner("notSetup");return}
