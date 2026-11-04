@@ -98,6 +98,11 @@ input:focus,textarea:focus,button:focus-visible,.item:focus-visible{outline:2px 
 @media (prefers-reduced-motion:reduce){.toast{transition:none}}
 .pairs{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
 .pairs .lbl{font-size:.9rem;color:var(--muted);margin-inline-end:4px}
+.pairs .sub2{font-size:.8rem;color:var(--faint);margin-inline-start:10px}
+.pairs .chip.pr{font-size:.8rem;padding:4px 10px;border-style:dashed}
+.pnote{font-size:.8rem;margin-top:2px;min-height:1.1em}
+.pnote.warn{color:var(--warn)}.pnote.ok{color:var(--ok)}
+.who-line{font-size:.82rem;color:var(--muted)}
 .info{background:var(--warn-soft);color:var(--warn);border-radius:8px;padding:8px 12px;font-size:.9rem}
 .pick{display:flex;flex-direction:column;gap:12px;align-items:flex-start;padding:30px 6px}
 .pick h3{font-family:var(--display);font-weight:500;font-size:1.15rem;margin:0}
@@ -142,16 +147,16 @@ const E={interviewer:446981591,name:1698401477,phone:333120488,role:1381842934,e
 const REC=["להתקדם","אולי","לא מתאימה"];
 const AVHE=["בוקר","אחר הצהריים","ערב","שישי","מוצ\"ש"];
 const PW=["1","2","3","4","5+"];
-const DEFAULT_CFG={pairs:["Miri & Daniella","Hadassa & Adina","Myriam & Aliza","Yonah & Nadine"],roles:["מזכירות","מענה"],
+const DEFAULT_CFG={names:["מירי","דניאלה","עדינה","הדסה","מרים","עליזה","יונה","נדין"],pairs:["מירי ודניאלה","עדינה והדסה","מרים ועליזה","יונה ונדין"],roles:["מזכירות","מענה"],
   flags:[["קשה להבין אותה בדיבור","Hard to understand when speaking"],["תשובות קצרות או מעורפלות","Short or vague answers"],["לא מרגישה בנוח עם מחשב","Uncomfortable with computers"],["הגיעה באיחור או לא מוכנה","Late or unprepared"],["הזמינות לא מתאימה לצורך","Availability doesn't fit"],["שלילית לגבי עבודות קודמות","Negative about previous jobs"]].map(([he,en])=>({he,en}))};
 
 const T={
-en:{title:"Recruitment day notes",subtitle:"Quick notes during interviews, then send each candidate to the official form.",pairsLbl:"Interviewers:",pickH:"Choose your interviewer pair",pickP:"Tap your pair above. This device will remember it, and you can change it any time.",
+en:{title:"Recruitment day notes",subtitle:"Quick notes during interviews, then send each candidate to the official form.",pairsLbl:"Interviewers:",pairsSub:"Pairs:",pickH:"Choose who is interviewing",pickP:"Tap your name above, and your partner's if you're interviewing together. This device remembers it, and you can change it any time.",whoLine:"Interviewers:",phoneMissing:n=>`${n} digit${n>1?"s":""} missing (10 needed)`,phoneLong:"More than 10 digits, check the number",phoneZero:"The number should start with 0",phoneOk:"✓ 10 digits",phoneWarnSend:"Check the phone number before submitting",
  candidates:"Candidates",newc:"New candidate",cand:"Candidate",roleOtherPh:"Which role?",other:"Other",
  avail:"Availability",availHint:"Ask towards the end",av:["Morning","Afternoon","Evening","Friday","Motzash"],perWeek:"Times a week",hours:"Preferred hours",hoursPh:"From 4pm, not Sundays",eng:"English level",enga:"1 none",engb:"5 fluent",
  emptyH:"Start your first interview",emptyP:"Press New candidate when she sits down. Type her name and phone first, then your notes.",
  name:"Full name",role:"Roles she's interested in (pick any)",phone:"Phone",
- also:"Also interviewed by another pair",alsoNotePh:"Short note, e.g. for which role",matchPre:"Also interviewed by",matchFor:"for",
+ also:"Also interviewed by someone else",alsoNotePh:"Short note, e.g. for which role",matchPre:"Also interviewed by",matchFor:"for",
  during:"Notes",duringHint:"Keywords are enough",exp:"Experience, in brief",s1:"Something didn't work and she changed something to improve it",s2:"A mistake she made and what she did after",
  gap:"In the 2-minute gap",gapHint:"Fill these first, while it's fresh",
  r1:"Experience and skills fit",r1a:"1 negative",r1b:"5 excellent",r2:"Culture fit",r2a:"1 misfit",r2b:"5 exceptional",r3:"Self-confidence",r3a:"1 no",r3b:"5 yes",
@@ -162,12 +167,12 @@ en:{title:"Recruitment day notes",subtitle:"Quick notes during interviews, then 
  tally:(a,b,c)=>`${a} candidates · ${b} ready · ${c} sent`,copied:"Notes copied",copyFail:"Select the text and copy it",
  offline:"Can't reach the Google Sheet right now. Your notes are kept on this device and will save when the connection is back.",
  notSetup:"Setup isn't finished: the Apps Script link hasn't been added to this page yet.",flagsFor:"Warning signs"},
-he:{title:"יום גיוס – ראיונות",subtitle:"הערות קצרות בזמן הראיון, ואחר כך שליחה של כל מועמדת לטופס הרשמי.",pairsLbl:"מראיינות:",pickH:"בחרי את צמד המראיינות",pickP:"לחצי על הצמד שלך למעלה. המכשיר יזכור אותו, ואפשר להחליף בכל רגע.",
+he:{title:"יום גיוס – ראיונות",subtitle:"הערות קצרות בזמן הראיון, ואחר כך שליחה של כל מועמדת לטופס הרשמי.",pairsLbl:"מראיינות:",pairsSub:"צמדים:",pickH:"בחרי מי מראיינת",pickP:"לחצי על השם שלך למעלה, וגם על השותפה אם אתן מראיינות יחד. המכשיר יזכור, ואפשר להחליף בכל רגע.",whoLine:"מראיינות:",phoneMissing:n=>n===1?"חסרה ספרה אחת (צריך 10)":`חסרות ${n} ספרות (צריך 10)`,phoneLong:"יותר מ-10 ספרות, בדקי את המספר",phoneZero:"המספר צריך להתחיל ב-0",phoneOk:"✓ 10 ספרות",phoneWarnSend:"בדקי את מספר הטלפון לפני השליחה",
  candidates:"מועמדות",newc:"מועמדת חדשה",cand:"מועמדת",roleOtherPh:"איזה תפקיד?",other:"אחר",
  avail:"זמינות",availHint:"לשאול לקראת הסוף",av:["בוקר","אחר הצהריים","ערב","שישי","מוצ\"ש"],perWeek:"פעמים בשבוע",hours:"שעות מועדפות",hoursPh:"מ-16:00, לא בימי ראשון",eng:"רמת אנגלית",enga:"1 אין",engb:"5 שוטפת",
  emptyH:"התחילי את הראיון הראשון",emptyP:"לחצי על מועמדת חדשה כשהיא מתיישבת. קודם שם וטלפון, ואחר כך ההערות.",
  name:"שם מלא",role:"התפקידים שמעניינים אותה (אפשר לבחור כמה)",phone:"טלפון",
- also:"רואיינה גם על ידי צמד אחר",alsoNotePh:"הערה קצרה, למשל לאיזה תפקיד",matchPre:"רואיינה גם על ידי",matchFor:"לתפקיד",
+ also:"רואיינה גם על ידי מישהי אחרת",alsoNotePh:"הערה קצרה, למשל לאיזה תפקיד",matchPre:"רואיינה גם על ידי",matchFor:"לתפקיד",
  during:"הערות",duringHint:"מספיקות מילות מפתח",exp:"סיכום קצר של הניסיון שלה",s1:"מקרה שמשהו לא עבד והיא שינתה משהו כדי לשפר",s2:"טעות שעשתה ומה עשתה אחריה",
  gap:"בשתי הדקות שבין מועמדות",gapHint:"למלא קודם, כל עוד זה טרי",
  r1:"ניסיון קודם וכישורים",r1a:"1 שלילי",r1b:"5 מצוין",r2:"התאמה לתרבות הארגונית",r2a:"1 אי התאמה",r2b:"5 יוצא דופן",r3:"רושם על ביטחון עצמי",r3a:"1 לא",r3b:"5 כן",
@@ -182,7 +187,7 @@ he:{title:"יום גיוס – ראיונות",subtitle:"הערות קצרות �
 
 const ls={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
 let lang=ls.get("ia-lang","he"); const t=k=>T[lang][k];
-let cfg=ls.get("ia-cfg",DEFAULT_CFG); let pair=ls.get("ia-pair",""); let C={}; let sel=null; let delArm=null;
+let cfg=ls.get("ia-cfg",DEFAULT_CFG); let who=ls.get("ia-who",[]);if(!Array.isArray(who))who=[]; let C={}; let sel=null; let delArm=null;
 const unsynced=new Set(ls.get("ia-unsynced",[])); const timers={}; let inflight=0; let bannerKey=null;
 const READY=SCRIPT_URL&&!/PASTE_/.test(SCRIPT_URL);
 const $=id=>document.getElementById(id);
@@ -202,8 +207,10 @@ function flagLabel(he){const f=cfg.flags.find(x=>x.he===he);return lang==="he"?h
 /* ---------- backend ---------- */
 async function api(params){const u=SCRIPT_URL+"?"+new URLSearchParams(params).toString();const r=await fetch(u);if(!r.ok)throw new Error(r.status);const j=await r.json();if(j.error)throw new Error(j.error);return j}
 async function post(body){const r=await fetch(SCRIPT_URL,{method:"POST",body:JSON.stringify(body)});if(!r.ok)throw new Error(r.status);const j=await r.json();if(j.error)throw new Error(j.error);return j}
-function cacheKey(){return "ia-cands-"+pair}
-function persist(){if(pair)ls.set(cacheKey(),C);ls.set("ia-unsynced",[...unsynced])}
+function cacheKey(){return "ia-cands2-"+who.slice().sort().join("|")}
+function whoOf(c){return (c.interviewers&&c.interviewers.length)?c.interviewers:(c.pair?[c.pair]:[])}
+function pairNames(p){return cfg.names.filter(n=>p.includes(n))}
+function persist(){if(who.length)ls.set(cacheKey(),C);ls.set("ia-unsynced",[...unsynced])}
 function setSave(){const el=$("savestate");if(!el)return;el.textContent=inflight?t("saving"):(unsynced.size?t("unsynced"):t("saved"))}
 function queueSave(id){if(C[id])C[id].updatedAt=Date.now();unsynced.add(id);persist();setSave();clearTimeout(timers[id]);timers[id]=setTimeout(()=>flush(id),800)}
 async function flush(id){
@@ -214,11 +221,12 @@ async function flush(id){
 }
 setInterval(()=>{if(READY&&unsynced.size&&!inflight)[...unsynced].forEach(id=>{if(!timers[id])flush(id)})},15000);
 
-async function loadConfig(){if(!READY)return;try{const j=await api({action:"config"});if(j.pairs&&j.pairs.length){cfg={pairs:j.pairs,roles:j.roles||[],flags:j.flags||[]};ls.set("ia-cfg",cfg);if(pair&&!cfg.pairs.includes(pair)){pair="";ls.set("ia-pair","");C={};sel=null;renderRail()}renderPairs();renderSheet()}}catch(e){}}
+async function loadConfig(){if(!READY)return;try{const j=await api({action:"config"});if((j.names&&j.names.length)||(j.pairs&&j.pairs.length)){cfg={names:(j.names&&j.names.length)?j.names:DEFAULT_CFG.names,pairs:j.pairs||[],roles:j.roles||[],flags:j.flags||[]};ls.set("ia-cfg",cfg);const keep=who.filter(n=>cfg.names.includes(n));if(keep.length!==who.length){who=keep;ls.set("ia-who",who);if(who.length)loadPair();else{C={};sel=null;renderRail()}}renderPairs();renderSheet()}}catch(e){}}
 async function loadPair(){
+  if(!who.length){C={};sel=null;renderRail();renderSheet();return}
   C=ls.get(cacheKey(),{});sel=null;renderRail();renderSheet();
   if(!READY){showBanner("notSetup");return}
-  try{const j=await api({action:"list",pair});
+  try{const j=await api({action:"list",names:who.join(",")});
     const remote={};(j.candidates||[]).forEach(c=>{remote[c.id]=c});
     Object.keys(remote).forEach(id=>{const r=remote[id],l=C[id];if(!l||(r.updatedAt||0)>(l.updatedAt||0))C[id]=r});
     Object.keys(C).forEach(id=>{if(!remote[id]||(C[id].updatedAt||0)>(remote[id].updatedAt||0)){unsynced.add(id)}});
@@ -229,8 +237,8 @@ async function loadPair(){
 }
 const matchTimers={};
 function checkMatch(id){clearTimeout(matchTimers[id]);matchTimers[id]=setTimeout(async()=>{
-  const c=C[id];if(!c||!READY)return;if(digits(c.phone).length<9){if(c.matches&&c.matches.length){c.matches=[];queueSave(id);renderMatch()}return}
-  try{const j=await api({action:"match",phone:c.phone,pair,id});c.matches=j.matches||[];queueSave(id);if(id===sel)renderMatch()}catch(e){}
+  const c=C[id];if(!c||!READY)return;if(digits(c.phone).length<10){if(c.matches&&c.matches.length){c.matches=[];queueSave(id);renderMatch()}return}
+  try{const j=await api({action:"match",phone:c.phone,id});c.matches=j.matches||[];queueSave(id);if(id===sel)renderMatch()}catch(e){}
 },700)}
 
 /* ---------- form link ---------- */
@@ -243,7 +251,7 @@ function alsoLine(c){const bits=[];const seen=new Set();
   let s=bits.length?"ראיון נוסף: "+bits.join(", "):"";if(c.alsoNote&&c.alsoNote.trim())s+=(s?" · ":"ראיון נוסף: ")+one(c.alsoNote);return s}
 function formUrl(c){
   const p=[];const add=(k,v)=>{if(v!==undefined&&v!==null&&String(v).trim()!=="")p.push("entry."+E[k]+"="+encodeURIComponent(v))};
-  add("interviewer",pair);add("name",c.name);add("phone",c.phone);add("role",rolesOf(c));add("exp",one(c.exp));
+  add("interviewer",whoOf(c).join(", "));add("name",c.name);add("phone",c.phone);add("role",rolesOf(c));add("exp",one(c.exp));
   add("s1",one(c.s1));add("s2",one(c.s2));add("r1",c.r1);add("r2",c.r2);add("r3",c.r3);
   if(c.rec)add("rec",c.rec);else if(c.recOther){p.push("entry."+E.rec+"=__other_option__");p.push("entry."+E.rec+".other_option_response="+encodeURIComponent(c.recOther))}
   add("summary",[alsoLine(c),availLine(c),warnLine(c),one(c.summary)].filter(x=>x).join(" · "));
@@ -260,12 +268,14 @@ function notesText(c){const L=T[lang];const recLabel=c.rec?L.recv[REC.indexOf(c.
 function applyLang(){document.documentElement.lang=lang;$("app").dir=lang==="he"?"rtl":"ltr";$("toast").dir=$("app").dir;
   document.querySelectorAll("[data-t]").forEach(el=>el.textContent=t(el.dataset.t));if(bannerKey)$("banner").textContent=t(bannerKey);
   $("lang-en").setAttribute("aria-pressed",lang==="en");$("lang-he").setAttribute("aria-pressed",lang==="he")}
-function renderPairs(){$("pairs").innerHTML=`<span class="lbl">${t("pairsLbl")}</span>`+cfg.pairs.map(p=>`<button type="button" class="chip" data-pair="${esc(p)}" aria-pressed="${p===pair}">${esc(p)}</button>`).join("")}
+function renderPairs(){const names=cfg.names&&cfg.names.length?cfg.names:DEFAULT_CFG.names;
+  $("pairs").innerHTML=`<span class="lbl">${t("pairsLbl")}</span>`+names.map(n=>`<button type="button" class="chip" data-name="${esc(n)}" aria-pressed="${who.includes(n)}">${esc(n)}</button>`).join("")+
+   ((cfg.pairs||[]).length?`<span class="sub2">${t("pairsSub")}</span>`+cfg.pairs.map(p=>{const pn=pairNames(p);const on=pn.length&&pn.every(n=>who.includes(n))&&who.length===pn.length;return `<button type="button" class="chip pr" data-pair="${esc(p)}" aria-pressed="${on}">${esc(p)}</button>`}).join(""):"")}
 function renderRail(){ensureSel();const list=sorted();const L=T[lang];
-  $("newc").hidden=!pair;
+  $("newc").hidden=!who.length;
   $("list").innerHTML=list.map(c=>{const s=status(c);const lab={notes:L.sNotes,ready:L.sReady,sent:L.sSent}[s];
     return `<button type="button" class="item${c.id===sel?" sel":""}" data-id="${c.id}"><span class="nm">${esc(label(c))}<span class="rl">${esc(rolesOf(c))}</span></span><span class="pill p-${s}">${lab}</span></button>`}).join("");
-  $("tally").textContent=pair?L.tally(list.length,list.filter(c=>status(c)==="ready").length,list.filter(c=>c.sentAt).length):""}
+  $("tally").textContent=who.length?L.tally(list.length,list.filter(c=>status(c)==="ready").length,list.filter(c=>c.sentAt).length):""}
 function btns(k,vals,labels,c,ltr){return `<div class="btns" data-k="${k}">${vals.map((v,i)=>`<button type="button" class="b" data-v="${esc(v)}" aria-pressed="${String(c[k])===String(v)}"${ltr?' dir="ltr"':''}>${esc(labels[i])}</button>`).join("")}</div>`}
 function scale(k,c){const L=T[lang];return `<div class="scale"><span class="q ql">${L[k]}</span>${btns(k,[1,2,3,4,5],[1,2,3,4,5],c)}<div class="ends"><span>${L[k+"a"]}</span><span>${L[k+"b"]}</span></div></div>`}
 function chipList(group,vals,labels,selected){return `<div class="flags" data-group="${group}">${vals.map((v,i)=>`<button type="button" class="chip" data-v="${esc(v)}" aria-pressed="${selected.includes(v)}">${esc(labels[i])}</button>`).join("")}</div>`}
@@ -273,19 +283,23 @@ function flagsHtml(c){const roles=c.roles||[];const other=(c.roleOtherOn&&c.role
   return cfg.flags.filter(f=>!f.role||roles.includes(f.role)||(c.flags||[]).includes(f.he)||(other&&f.role===other))
     .map(f=>`<button type="button" class="flag" data-v="${esc(f.he)}" aria-pressed="${(c.flags||[]).includes(f.he)}">⚠ ${esc(lang==="he"?f.he:f.en)}${f.role?` <span style="opacity:.7">· ${esc(f.role)}</span>`:""}</button>`).join("")}
 function renderFlags(){const el=$("flagsBox");if(el&&C[sel])el.innerHTML=flagsHtml(C[sel])}
+function phoneState(v){const d=String(v||"");if(!d)return {k:"",ok:false};if(d.length>10)return {k:"long",ok:false};if(d.length<10)return {k:"missing",n:10-d.length,ok:false};if(d[0]!=="0")return {k:"zero",ok:false};return {k:"ok",ok:true}}
+function renderPhoneNote(){const el=$("pnote");const c=C[sel];if(!el||!c)return;const st=phoneState(c.phone);
+  el.className="pnote "+(st.k==="ok"?"ok":st.k?"warn":"");el.textContent=st.k==="missing"?t("phoneMissing")(st.n):st.k==="long"?t("phoneLong"):st.k==="zero"?t("phoneZero"):st.k==="ok"?t("phoneOk"):""}
 function renderMatch(){const el=$("match");const c=C[sel];if(!el||!c)return;const m=c.matches||[];
   el.hidden=!m.length;el.textContent=m.length?"ⓘ "+m.map(x=>`${t("matchPre")} ${x.pair}${x.roles?" "+t("matchFor")+" "+x.roles:""}`).join(" · "):""}
 function renderSheet(){
   const L=T[lang];
-  if(!pair){$("sheet").innerHTML=`<div class="pick"><h3>${L.pickH}</h3><p class="note">${L.pickP}</p></div>`;return}
+  if(!who.length){$("sheet").innerHTML=`<div class="pick"><h3>${L.pickH}</h3><p class="note">${L.pickP}</p></div>`;return}
   ensureSel();const c=C[sel];
   if(!c){$("sheet").innerHTML=`<div class="empty"><h3>${L.emptyH}</h3><p>${L.emptyP}</p></div>`;return}
-  const roleVals=[...cfg.roles];const others=cfg.pairs.filter(p=>p!==pair);
+  const roleVals=[...cfg.roles];const mine=whoOf(c);const others=(cfg.names||[]).filter(n=>!mine.includes(n));
   $("sheet").innerHTML=`
   <div class="row">
     <label class="f">${L.name}<input type="text" id="f-name" data-f="name" value="${esc(c.name)}" autocomplete="off"></label>
-    <label class="f">${L.phone}<input type="tel" id="f-phone" data-f="phone" value="${esc(c.phone)}" dir="ltr" autocomplete="off"></label>
+    <label class="f">${L.phone}<input type="tel" id="f-phone" data-f="phone" value="${esc(c.phone)}" dir="ltr" inputmode="numeric" maxlength="10" placeholder="05XXXXXXXX" autocomplete="off"><span class="pnote" id="pnote"></span></label>
   </div>
+  <div class="who-line">${L.whoLine} ${esc(mine.join(", "))}</div>
   <div class="info" id="match" hidden></div>
   <div class="q"><span class="ql">${L.role}</span>
     <div class="flags" data-group="roles">${roleVals.map(v=>`<button type="button" class="chip" data-v="${esc(v)}" aria-pressed="${(c.roles||[]).includes(v)}">${esc(v)}</button>`).join("")}<button type="button" class="chip" data-toggle="roleOtherOn" aria-pressed="${!!c.roleOtherOn}">${L.other}</button></div>
@@ -324,19 +338,23 @@ function renderSheet(){
       <a class="btn primary" id="send" href="${esc(formUrl(c))}" target="_blank" rel="noopener">${L.send} ↗</a>
     </div>
   </div>`;
-  renderMatch();setSave();
+  renderMatch();renderPhoneNote();setSave();
 }
 function renderAll(){applyLang();renderPairs();renderRail();renderSheet()}
 function refreshLink(){const a=$("send");if(a&&C[sel])a.href=formUrl(C[sel])}
 
 /* ---------- events ---------- */
-function newCandidate(){if(!pair)return;const id="c"+Date.now().toString(36)+Math.random().toString(36).slice(2,5);
-  C[id]={id,pair,name:"",createdAt:Date.now()};sel=id;delArm=null;queueSave(id);renderRail();renderSheet();window.scrollTo({top:0});$("f-name")?.focus()}
+function newCandidate(){if(!who.length)return;const id="c"+Date.now().toString(36)+Math.random().toString(36).slice(2,5);
+  C[id]={id,interviewers:who.slice(),name:"",createdAt:Date.now()};sel=id;delArm=null;queueSave(id);renderRail();renderSheet();window.scrollTo({top:0});$("f-name")?.focus()}
 $("newc").onclick=newCandidate;
-$("pairs").onclick=(e=>{const b=e.target.closest("[data-pair]");if(!b)return;pair=b.dataset.pair;ls.set("ia-pair",pair);renderPairs();loadPair()});
+$("pairs").onclick=(e=>{const nb=e.target.closest("[data-name]");const pb=e.target.closest("[data-pair]");if(!nb&&!pb)return;
+  if(nb){const n=nb.dataset.name;who=who.includes(n)?who.filter(x=>x!==n):[...who,n]}
+  else{const pn=pairNames(pb.dataset.pair);const on=pn.length&&pn.every(n=>who.includes(n))&&who.length===pn.length;who=on?[]:pn}
+  ls.set("ia-who",who);renderPairs();clearTimeout(window.__whoT);window.__whoT=setTimeout(loadPair,400)});
 $("list").onclick=(e=>{const b=e.target.closest(".item");if(!b)return;sel=b.dataset.id;delArm=null;renderRail();renderSheet()});
 document.querySelectorAll(".lang button").forEach(b=>{b.onclick=()=>{lang=b.dataset.lang;ls.set("ia-lang",lang);renderAll()}});
-$("sheet").oninput=(e=>{const f=e.target.dataset.f;if(!f||!C[sel])return;const c=C[sel];c[f]=e.target.value;
+$("sheet").oninput=(e=>{const f=e.target.dataset.f;if(!f||!C[sel])return;const c=C[sel];
+  if(f==="phone"){const clean=e.target.value.replace(/\D/g,"").slice(0,10);if(clean!==e.target.value)e.target.value=clean;c.phone=clean;renderPhoneNote()}else c[f]=e.target.value;
   if(f==="recOther"&&e.target.value.trim()){c.rec="";document.querySelectorAll('[data-k="rec"] .b').forEach(x=>x.setAttribute("aria-pressed","false"))}
   queueSave(sel);refreshLink();if(f==="phone")checkMatch(sel);if(f==="name"||f==="roleOther")renderRail()});
 $("sheet").onclick=(async e=>{
@@ -348,7 +366,7 @@ $("sheet").onclick=(async e=>{
   const bb=e.target.closest(".btns .b");if(bb){const k=bb.parentElement.dataset.k;const v=bb.dataset.v;c[k]=String(c[k])===v?"":v;
     if(k==="rec"&&c.rec){c.recOther="";const o=$("f-recOther");if(o)o.value=""}
     bb.parentElement.querySelectorAll(".b").forEach(x=>x.setAttribute("aria-pressed",String(c[k])===x.dataset.v));queueSave(sel);refreshLink();renderRail();return}
-  if(e.target.closest("#send")){c.sentAt=Date.now();queueSave(sel);setTimeout(()=>{renderRail();renderSheet();toast(t("sentNote"))},50);return}
+  if(e.target.closest("#send")){if(!phoneState(c.phone).ok){setTimeout(()=>toast(t("phoneWarnSend")),900)}c.sentAt=Date.now();queueSave(sel);setTimeout(()=>{renderRail();renderSheet();toast(t("sentNote"))},50);return}
   if(e.target.closest("#unsend")){c.sentAt=null;queueSave(sel);renderRail();renderSheet();return}
   if(e.target.closest("#copy")){const txt=notesText(c);try{await navigator.clipboard.writeText(txt);toast(t("copied"))}catch(err){const ta=document.createElement("textarea");ta.value=txt;ta.style.position="fixed";ta.style.opacity="0";document.body.appendChild(ta);ta.select();try{document.execCommand("copy");toast(t("copied"))}catch(_){toast(t("copyFail"))}ta.remove()}return}
   if(e.target.closest("#next")){const l=sorted();const i=l.findIndex(x=>x.id===sel);const nx=l.slice(i+1).find(x=>!x.sentAt)||l.find(x=>status(x)==="notes"&&x.id!==sel);
@@ -361,7 +379,7 @@ window.onerror=(msg=>{const b=$("banner");b.hidden=false;b.textContent="Somethin
 renderAll();
 if(!READY)showBanner("notSetup");
 loadConfig();
-if(pair)loadPair();
+if(who.length)loadPair();
 })();
 </script>
 </body>
