@@ -103,6 +103,16 @@ input:focus,textarea:focus,button:focus-visible,.item:focus-visible{outline:2px 
 .pnote{font-size:.8rem;margin-top:2px;min-height:1.1em}
 .pnote.warn{color:var(--warn)}.pnote.ok{color:var(--ok)}
 .who-line{font-size:.82rem;color:var(--muted)}
+.recbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;border:1px solid var(--line);border-radius:var(--r);padding:8px 12px;background:var(--bg)}
+.recbtn{font:inherit;font-family:var(--display);font-weight:500;font-size:.9rem;border-radius:999px;padding:6px 14px;border:1px solid var(--flag);color:var(--flag);background:var(--panel);cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.recbtn .dot{width:10px;height:10px;border-radius:50%;background:var(--flag)}
+.recbtn.on{background:var(--flag);color:var(--panel)}.recbtn.on .dot{background:var(--panel);border-radius:2px}
+.rectime{font-variant-numeric:tabular-nums;font-size:.9rem;color:var(--flag)}
+.reclist{display:flex;gap:8px;flex-wrap:wrap;font-size:.85rem}
+.reclist a{color:var(--accent-ink)}
+.recmsg{font-size:.82rem;color:var(--muted)}
+@media (prefers-reduced-motion:no-preference){.recbtn.on .dot{animation:blink 1s steps(2) infinite}}
+@keyframes blink{50%{opacity:.3}}
 .info{background:var(--warn-soft);color:var(--warn);border-radius:8px;padding:8px 12px;font-size:.9rem}
 .pick{display:flex;flex-direction:column;gap:12px;align-items:flex-start;padding:30px 6px}
 .pick h3{font-family:var(--display);font-weight:500;font-size:1.15rem;margin:0}
@@ -151,7 +161,7 @@ const DEFAULT_CFG={names:["מירי","דניאלה","עדינה","הדסה","מ�
   flags:[["קשה להבין אותה בדיבור","Hard to understand when speaking"],["תשובות קצרות או מעורפלות","Short or vague answers"],["לא מרגישה בנוח עם מחשב","Uncomfortable with computers"],["הגיעה באיחור או לא מוכנה","Late or unprepared"],["הזמינות לא מתאימה לצורך","Availability doesn't fit"],["שלילית לגבי עבודות קודמות","Negative about previous jobs"]].map(([he,en])=>({he,en}))};
 
 const T={
-en:{title:"Recruitment day notes",subtitle:"Quick notes during interviews, then send each candidate to the official form.",pairsLbl:"Interviewers:",pairsSub:"Pairs:",pickH:"Choose who is interviewing",pickP:"Tap your name above, and your partner's if you're interviewing together. This device remembers it, and you can change it any time.",whoLine:"Interviewers:",phoneMissing:n=>`${n} digit${n>1?"s":""} missing (10 needed)`,phoneLong:"More than 10 digits, check the number",phoneZero:"The number should start with 0",phoneOk:"✓ 10 digits",phoneWarnSend:"Check the phone number before submitting",
+en:{title:"Recruitment day notes",subtitle:"Quick notes during interviews, then send each candidate to the official form.",pairsLbl:"Interviewers:",pairsSub:"Pairs:",pickH:"Choose who is interviewing",pickP:"Tap your name above, and your partner's if you're interviewing together. This device remembers it, and you can change it any time.",whoLine:"Interviewers:",phoneMissing:n=>`${n} digit${n>1?"s":""} missing (10 needed)`,phoneLong:"More than 10 digits, check the number",phoneZero:"The number should start with 0",phoneOk:"✓ 10 digits",phoneWarnSend:"Check the phone number before submitting",recStart:"Record",recStop:"Stop",recItem:"Recording",recUploading:"Saving recording…",recSaved:"Recording saved",recFail:"Recording not saved yet",recRetry:"Try again",recNoMic:"Microphone not available. Allow microphone access in the browser and try again.",recOther:"Recording another candidate. Stop it first.",
  candidates:"Candidates",newc:"New candidate",cand:"Candidate",roleOtherPh:"Which role?",other:"Other",
  avail:"Availability",availHint:"Ask towards the end",av:["Morning","Afternoon","Evening","Friday","Motzash"],perWeek:"Times a week",hours:"Preferred hours",hoursPh:"From 4pm, not Sundays",eng:"English level",enga:"1 none",engb:"5 fluent",
  emptyH:"Start your first interview",emptyP:"Press New candidate when she sits down. Type her name and phone first, then your notes.",
@@ -167,7 +177,7 @@ en:{title:"Recruitment day notes",subtitle:"Quick notes during interviews, then 
  tally:(a,b,c)=>`${a} candidates · ${b} ready · ${c} sent`,copied:"Notes copied",copyFail:"Select the text and copy it",
  offline:"Can't reach the Google Sheet right now. Your notes are kept on this device and will save when the connection is back.",
  notSetup:"Setup isn't finished: the Apps Script link hasn't been added to this page yet.",flagsFor:"Warning signs"},
-he:{title:"יום גיוס – ראיונות",subtitle:"הערות קצרות בזמן הראיון, ואחר כך שליחה של כל מועמדת לטופס הרשמי.",pairsLbl:"מראיינות:",pairsSub:"צמדים:",pickH:"בחרי מי מראיינת",pickP:"לחצי על השם שלך למעלה, וגם על השותפה אם אתן מראיינות יחד. המכשיר יזכור, ואפשר להחליף בכל רגע.",whoLine:"מראיינות:",phoneMissing:n=>n===1?"חסרה ספרה אחת (צריך 10)":`חסרות ${n} ספרות (צריך 10)`,phoneLong:"יותר מ-10 ספרות, בדקי את המספר",phoneZero:"המספר צריך להתחיל ב-0",phoneOk:"✓ 10 ספרות",phoneWarnSend:"בדקי את מספר הטלפון לפני השליחה",
+he:{title:"יום גיוס – ראיונות",subtitle:"הערות קצרות בזמן הראיון, ואחר כך שליחה של כל מועמדת לטופס הרשמי.",pairsLbl:"מראיינות:",pairsSub:"צמדים:",pickH:"בחרי מי מראיינת",pickP:"לחצי על השם שלך למעלה, וגם על השותפה אם אתן מראיינות יחד. המכשיר יזכור, ואפשר להחליף בכל רגע.",whoLine:"מראיינות:",phoneMissing:n=>n===1?"חסרה ספרה אחת (צריך 10)":`חסרות ${n} ספרות (צריך 10)`,phoneLong:"יותר מ-10 ספרות, בדקי את המספר",phoneZero:"המספר צריך להתחיל ב-0",phoneOk:"✓ 10 ספרות",phoneWarnSend:"בדקי את מספר הטלפון לפני השליחה",recStart:"הקלטה",recStop:"עצירה",recItem:"הקלטה",recUploading:"שומר הקלטה…",recSaved:"ההקלטה נשמרה",recFail:"ההקלטה עוד לא נשמרה",recRetry:"לנסות שוב",recNoMic:"אין גישה למיקרופון. אשרי גישה למיקרופון בדפדפן ונסי שוב.",recOther:"יש הקלטה פעילה למועמדת אחרת. עצרי אותה קודם.",
  candidates:"מועמדות",newc:"מועמדת חדשה",cand:"מועמדת",roleOtherPh:"איזה תפקיד?",other:"אחר",
  avail:"זמינות",availHint:"לשאול לקראת הסוף",av:["בוקר","אחר הצהריים","ערב","שישי","מוצ\"ש"],perWeek:"פעמים בשבוע",hours:"שעות מועדפות",hoursPh:"מ-16:00, לא בימי ראשון",eng:"רמת אנגלית",enga:"1 אין",engb:"5 שוטפת",
  emptyH:"התחילי את הראיון הראשון",emptyP:"לחצי על מועמדת חדשה כשהיא מתיישבת. קודם שם וטלפון, ואחר כך ההערות.",
@@ -300,6 +310,7 @@ function renderSheet(){
     <label class="f">${L.phone}<input type="tel" id="f-phone" data-f="phone" value="${esc(c.phone)}" dir="ltr" inputmode="numeric" maxlength="10" placeholder="05XXXXXXXX" autocomplete="off"><span class="pnote" id="pnote"></span></label>
   </div>
   <div class="who-line">${L.whoLine} ${esc(mine.join(", "))}</div>
+  <div class="recbar" id="recbar"></div>
   <div class="info" id="match" hidden></div>
   <div class="q"><span class="ql">${L.role}</span>
     <div class="flags" data-group="roles">${roleVals.map(v=>`<button type="button" class="chip" data-v="${esc(v)}" aria-pressed="${(c.roles||[]).includes(v)}">${esc(v)}</button>`).join("")}<button type="button" class="chip" data-toggle="roleOtherOn" aria-pressed="${!!c.roleOtherOn}">${L.other}</button></div>
@@ -338,10 +349,47 @@ function renderSheet(){
       <a class="btn primary" id="send" href="${esc(formUrl(c))}" target="_blank" rel="noopener">${L.send} ↗</a>
     </div>
   </div>`;
-  renderMatch();renderPhoneNote();setSave();
+  renderMatch();renderPhoneNote();renderRec();setSave();
 }
 function renderAll(){applyLang();renderPairs();renderRail();renderSheet()}
 function refreshLink(){const a=$("send");if(a&&C[sel])a.href=formUrl(C[sel])}
+
+/* ---------- recording ---------- */
+let rec=null;
+const pendingAudio=[];
+let recMsg="";
+const fmt=sec=>Math.floor(sec/60)+":"+String(Math.floor(sec%60)).padStart(2,"0");
+function renderRec(){const el=$("recbar");const c=C[sel];if(!el||!c)return;const L=T[lang];
+  const on=rec&&rec.id===sel;const busyOther=rec&&rec.id!==sel;
+  const items=(c.recordings||[]).map((r,i)=>`<a href="${esc(r.url)}" target="_blank" rel="noopener">${L.recItem} ${i+1} (${fmt(r.dur||0)}) ↗</a>`).join("");
+  const pend=pendingAudio.filter(p=>p.id===sel).length;
+  el.innerHTML=`<button type="button" class="recbtn${on?" on":""}" id="recBtn"><span class="dot"></span>${on?L.recStop:L.recStart}</button>`+
+    (on?`<span class="rectime" id="recTime">${fmt((Date.now()-rec.start)/1000)}</span>`:"")+
+    `<span class="reclist">${items}</span>`+
+    (pend&&!recMsg?`<span class="recmsg">${L.recFail} · <button type="button" class="btn ghost" id="recRetry" style="padding:2px 6px">${L.recRetry}</button></span>`:"")+
+    (recMsg?`<span class="recmsg">${esc(recMsg)}</span>`:"")+(busyOther?`<span class="recmsg">${L.recOther}</span>`:"")}
+async function startRec(){if(rec){toast(t("recOther"));return}const id=sel;
+  try{const stream=await navigator.mediaDevices.getUserMedia({audio:true});
+    const types=["audio/webm;codecs=opus","audio/webm","audio/mp4","audio/ogg;codecs=opus"];const mime=types.find(x=>window.MediaRecorder&&MediaRecorder.isTypeSupported&&MediaRecorder.isTypeSupported(x))||"";
+    const mr=new MediaRecorder(stream,mime?{mimeType:mime,audioBitsPerSecond:32000}:{audioBitsPerSecond:32000});
+    const r={id,mr,chunks:[],start:Date.now(),stream,mime:mr.mimeType||mime||"audio/webm"};rec=r;
+    mr.ondataavailable=e=>{if(e.data&&e.data.size)r.chunks.push(e.data)};
+    mr.start(5000);r.timer=setInterval(()=>{const tm=$("recTime");if(tm&&rec)tm.textContent=fmt((Date.now()-rec.start)/1000)},500);
+    recMsg="";renderRec();
+  }catch(err){recMsg=t("recNoMic");renderRec()}}
+function stopRec(){if(!rec)return;const r=rec;
+  r.mr.onstop=()=>{clearInterval(r.timer);r.stream.getTracks().forEach(tr=>tr.stop());
+    const blob=new Blob(r.chunks,{type:r.mime});const dur=Math.round((Date.now()-r.start)/1000);rec=null;
+    const item={id:r.id,name:(C[r.id]&&C[r.id].name)||"",mime:r.mime,blob,dur};pendingAudio.push(item);renderRec();uploadAudio(item)};
+  r.mr.stop()}
+async function uploadAudio(item){if(!READY)return;recMsg=t("recUploading");if(item.id===sel)renderRec();
+  try{const b64=await new Promise((res,rej)=>{const fr=new FileReader();fr.onload=()=>res(String(fr.result).split(",")[1]);fr.onerror=rej;fr.readAsDataURL(item.blob)});
+    const j=await post({action:"audio",id:item.id,name:item.name,mime:item.mime,b64});
+    const c=C[item.id];if(c){c.recordings=(c.recordings||[]).concat([{url:j.url,dur:item.dur,at:Date.now()}]);queueSave(item.id)}
+    pendingAudio.splice(pendingAudio.indexOf(item),1);recMsg=t("recSaved");toast(t("recSaved"))}
+  catch(e){recMsg=""}
+  renderRec();setTimeout(()=>{if(recMsg===t("recSaved")){recMsg="";renderRec()}},4000)}
+window.addEventListener("beforeunload",e=>{if(rec||pendingAudio.length){e.preventDefault();e.returnValue=""}});
 
 /* ---------- events ---------- */
 function newCandidate(){if(!who.length)return;const id="c"+Date.now().toString(36)+Math.random().toString(36).slice(2,5);
@@ -359,6 +407,8 @@ $("sheet").oninput=(e=>{const f=e.target.dataset.f;if(!f||!C[sel])return;const c
   queueSave(sel);refreshLink();if(f==="phone")checkMatch(sel);if(f==="name"||f==="roleOther")renderRail()});
 $("sheet").onclick=(async e=>{
   const c=C[sel];if(!c)return;
+  if(e.target.closest("#recBtn")){if(rec&&rec.id===sel)stopRec();else startRec();return}
+  if(e.target.closest("#recRetry")){pendingAudio.filter(p=>p.id===sel).forEach(uploadAudio);return}
   const tg=e.target.closest("[data-toggle]");if(tg){const k=tg.dataset.toggle;c[k]=!c[k];tg.setAttribute("aria-pressed",!!c[k]);
     if(k==="roleOtherOn"){$("roleOtherWrap").hidden=!c.roleOtherOn;if(c.roleOtherOn)$("f-roleOther").focus()}queueSave(sel);refreshLink();renderRail();return}
   const gb=e.target.closest("[data-group] [data-v]");if(gb){const g=gb.closest("[data-group]").dataset.group;const v=gb.dataset.v;const arr=c[g]=(c[g]||[]).slice();
