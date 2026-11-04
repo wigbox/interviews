@@ -344,6 +344,7 @@ function renderSheet(){
   <div class="actions">
     <div style="display:flex;gap:10px;align-items:center"><span class="save" id="savestate"></span><button type="button" class="btn ghost danger" id="del">${delArm===sel?L.delSure:L.del}</button></div>
     <div class="act-r">
+      <span id="recbar2" style="display:inline-flex;align-items:center;gap:6px"></span>
       <button type="button" class="btn" id="copy">${L.copy}</button>
       <button type="button" class="btn" id="next">${L.next}</button>
       <a class="btn primary" id="send" href="${esc(formUrl(c))}" target="_blank" rel="noopener">${L.send} ↗</a>
@@ -360,7 +361,8 @@ const pendingAudio=[];
 let recMsg="";
 const fmt=sec=>Math.floor(sec/60)+":"+String(Math.floor(sec%60)).padStart(2,"0");
 function renderRec(){const el=$("recbar");const c=C[sel];if(!el||!c)return;const L=T[lang];
-  const on=rec&&rec.id===sel;const busyOther=rec&&rec.id!==sel;
+  const on=rec&&rec.id===sel;
+  const el2=$("recbar2");if(el2)el2.innerHTML=`<button type="button" class="recbtn${on?" on":""}" id="recBtn2"><span class="dot"></span>${on?L.recStop:L.recStart}</button>`+(on?`<span class="rectime" id="recTime2">${fmt((Date.now()-rec.start)/1000)}</span>`:"");const busyOther=rec&&rec.id!==sel;
   const items=(c.recordings||[]).map((r,i)=>`<a href="${esc(r.url)}" target="_blank" rel="noopener">${L.recItem} ${i+1} (${fmt(r.dur||0)}) ↗</a>`).join("");
   const pend=pendingAudio.filter(p=>p.id===sel).length;
   el.innerHTML=`<button type="button" class="recbtn${on?" on":""}" id="recBtn"><span class="dot"></span>${on?L.recStop:L.recStart}</button>`+
@@ -374,7 +376,7 @@ async function startRec(){if(rec){toast(t("recOther"));return}const id=sel;
     const mr=new MediaRecorder(stream,mime?{mimeType:mime,audioBitsPerSecond:32000}:{audioBitsPerSecond:32000});
     const r={id,mr,chunks:[],start:Date.now(),stream,mime:mr.mimeType||mime||"audio/webm"};rec=r;
     mr.ondataavailable=e=>{if(e.data&&e.data.size)r.chunks.push(e.data)};
-    mr.start(5000);r.timer=setInterval(()=>{const tm=$("recTime");if(tm&&rec)tm.textContent=fmt((Date.now()-rec.start)/1000)},500);
+    mr.start(5000);r.timer=setInterval(()=>{if(!rec)return;const v=fmt((Date.now()-rec.start)/1000);["recTime","recTime2"].forEach(k=>{const tm=$(k);if(tm)tm.textContent=v})},500);
     recMsg="";renderRec();
   }catch(err){recMsg=t("recNoMic");renderRec()}}
 function stopRec(){if(!rec)return;const r=rec;
@@ -407,7 +409,7 @@ $("sheet").oninput=(e=>{const f=e.target.dataset.f;if(!f||!C[sel])return;const c
   queueSave(sel);refreshLink();if(f==="phone")checkMatch(sel);if(f==="name"||f==="roleOther")renderRail()});
 $("sheet").onclick=(async e=>{
   const c=C[sel];if(!c)return;
-  if(e.target.closest("#recBtn")){if(rec&&rec.id===sel)stopRec();else startRec();return}
+  if(e.target.closest("#recBtn,#recBtn2")){if(rec&&rec.id===sel)stopRec();else startRec();return}
   if(e.target.closest("#recRetry")){pendingAudio.filter(p=>p.id===sel).forEach(uploadAudio);return}
   const tg=e.target.closest("[data-toggle]");if(tg){const k=tg.dataset.toggle;c[k]=!c[k];tg.setAttribute("aria-pressed",!!c[k]);
     if(k==="roleOtherOn"){$("roleOtherWrap").hidden=!c.roleOtherOn;if(c.roleOtherOn)$("f-roleOther").focus()}queueSave(sel);refreshLink();renderRail();return}
@@ -416,7 +418,7 @@ $("sheet").onclick=(async e=>{
   const bb=e.target.closest(".btns .b");if(bb){const k=bb.parentElement.dataset.k;const v=bb.dataset.v;c[k]=String(c[k])===v?"":v;
     if(k==="rec"&&c.rec){c.recOther="";const o=$("f-recOther");if(o)o.value=""}
     bb.parentElement.querySelectorAll(".b").forEach(x=>x.setAttribute("aria-pressed",String(c[k])===x.dataset.v));queueSave(sel);refreshLink();renderRail();return}
-  if(e.target.closest("#send")){if(!phoneState(c.phone).ok){setTimeout(()=>toast(t("phoneWarnSend")),900)}c.sentAt=Date.now();queueSave(sel);setTimeout(()=>{renderRail();renderSheet();toast(t("sentNote"))},50);return}
+  if(e.target.closest("#send")){if(rec&&rec.id===sel)stopRec();if(!phoneState(c.phone).ok){setTimeout(()=>toast(t("phoneWarnSend")),900)}c.sentAt=Date.now();queueSave(sel);setTimeout(()=>{renderRail();renderSheet();toast(t("sentNote"))},50);return}
   if(e.target.closest("#unsend")){c.sentAt=null;queueSave(sel);renderRail();renderSheet();return}
   if(e.target.closest("#copy")){const txt=notesText(c);try{await navigator.clipboard.writeText(txt);toast(t("copied"))}catch(err){const ta=document.createElement("textarea");ta.value=txt;ta.style.position="fixed";ta.style.opacity="0";document.body.appendChild(ta);ta.select();try{document.execCommand("copy");toast(t("copied"))}catch(_){toast(t("copyFail"))}ta.remove()}return}
   if(e.target.closest("#next")){const l=sorted();const i=l.findIndex(x=>x.id===sel);const nx=l.slice(i+1).find(x=>!x.sentAt)||l.find(x=>status(x)==="notes"&&x.id!==sel);
