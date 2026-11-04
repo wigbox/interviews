@@ -187,7 +187,7 @@ he:{title:"יום גיוס – ראיונות",subtitle:"הערות קצרות �
 
 const ls={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
 let lang=ls.get("ia-lang","he"); const t=k=>T[lang][k];
-let cfg=ls.get("ia-cfg",DEFAULT_CFG); let who=ls.get("ia-who",[]);if(!Array.isArray(who))who=[]; let C={}; let sel=null; let delArm=null;
+let cfg=ls.get("ia-cfg",DEFAULT_CFG);if(!cfg||typeof cfg!=="object")cfg=DEFAULT_CFG;if(!Array.isArray(cfg.names)||!cfg.names.length)cfg.names=DEFAULT_CFG.names;if(!Array.isArray(cfg.pairs))cfg.pairs=[];if(!Array.isArray(cfg.roles))cfg.roles=DEFAULT_CFG.roles;if(!Array.isArray(cfg.flags))cfg.flags=DEFAULT_CFG.flags; let who=ls.get("ia-who",[]);if(!Array.isArray(who))who=[]; let C={}; let sel=null; let delArm=null;
 const unsynced=new Set(ls.get("ia-unsynced",[])); const timers={}; let inflight=0; let bannerKey=null;
 const READY=SCRIPT_URL&&!/PASTE_/.test(SCRIPT_URL);
 const $=id=>document.getElementById(id);
